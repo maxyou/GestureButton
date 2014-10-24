@@ -1,6 +1,10 @@
 package com.maxproj.gesturebutton;
 
 import android.os.Bundle;
+import android.animation.AnimatorInflater;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.support.v4.view.MotionEventCompat;
@@ -10,10 +14,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 public class GestureButton extends Activity {
 
 	FrameLayout frameView;
+	LinearLayout linearLayout;
 	ActionBar actionBar;
 
 	@Override
@@ -23,12 +29,23 @@ public class GestureButton extends Activity {
 
 		actionBar = getActionBar();
 
-		frameView = (FrameLayout) findViewById(R.id.top_frame);
-
+		frameView = (FrameLayout)findViewById(R.id.top_frame);
+		linearLayout = (LinearLayout)findViewById(R.id.l2_linearlayout);
+		
 		init();
+		
+		//funcTest();
 
 	}
 
+	
+	private void funcTest(){
+		
+        ObjectAnimator anim = ObjectAnimator.ofFloat(linearLayout, "alpha", 0f, 1f, 0.5f, 1f);
+        anim.setDuration(4000);
+		anim.start();
+	}
+	
 	private void init() {
 		frameView.setOnTouchListener(new OnTouchListener() {
 
@@ -63,6 +80,11 @@ public class GestureButton extends Activity {
 		});
 	}
 
+	private void ActionBarB1(){
+		funcTest();
+	}
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -76,6 +98,7 @@ public class GestureButton extends Activity {
 		switch (item.getItemId()) {
 		case R.id.action_b1:
 			MyLog.d(MyLog.DEBUG, "ActionBar b1!");
+			ActionBarB1();
 			return true;
 		case R.id.action_settings:
 			MyLog.d(MyLog.DEBUG, "ActionBar setting!");
@@ -84,5 +107,6 @@ public class GestureButton extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
 
 }
