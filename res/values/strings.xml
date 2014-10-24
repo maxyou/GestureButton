@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GestureButton</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="gesture_button_layer">This is gesture button layer!</string>
+    
+    <string name="fade_button">Fade In/Out</string>
+    
+</resources>
