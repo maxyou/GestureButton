@@ -2,6 +2,7 @@ package com.maxproj.gesturebutton;
 
 import android.os.Bundle;
 import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
@@ -46,6 +47,18 @@ public class GestureButton extends Activity {
 		anim.start();
 	}
 	
+	private void funcTest2(){
+		
+		ObjectAnimator objectAnimator = (ObjectAnimator) AnimatorInflater.loadAnimator(this,
+			    R.animator.fade);
+		objectAnimator.setTarget(linearLayout);
+		objectAnimator.start();
+	}
+	private void ActionBarB1(){
+		//funcTest();
+		funcTest2();
+	}
+	
 	private void init() {
 		frameView.setOnTouchListener(new OnTouchListener() {
 
@@ -80,10 +93,7 @@ public class GestureButton extends Activity {
 		});
 	}
 
-	private void ActionBarB1(){
-		funcTest();
-	}
-	
+
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
