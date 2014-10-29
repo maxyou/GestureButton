@@ -1,36 +1,29 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/top_frame"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <LinearLayout
-        android:id="@+id/l2_linearlayout"
+    <com.maxproj.gesturebutton.GestureButtonLayout
+        android:id="@+id/gesture_button_layer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <Button
-            android:id="@+id/bmc_ibn_del"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/fade_button" />
+        <LinearLayout
+            android:id="@+id/app_layer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/hello_world" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/b1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fade_button" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/notepad_paper"
-        android:visibility="gone" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hello_world" />
+        </LinearLayout>
+    </com.maxproj.gesturebutton.GestureButtonLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/gesture_button_layer" />
-    </LinearLayout>
-
-</FrameLayout>
+</LinearLayout>

@@ -2,10 +2,7 @@ package com.maxproj.gesturebutton;
 
 import android.os.Bundle;
 import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.support.v4.view.MotionEventCompat;
@@ -17,10 +14,10 @@ import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-public class GestureButton extends Activity {
+public class GestureButtonTest extends Activity {
 
-	FrameLayout frameView;
-	LinearLayout linearLayout;
+	FrameLayout gestureLayer;
+	LinearLayout appLayer;
 	ActionBar actionBar;
 
 	@Override
@@ -30,8 +27,8 @@ public class GestureButton extends Activity {
 
 		actionBar = getActionBar();
 
-		frameView = (FrameLayout)findViewById(R.id.top_frame);
-		linearLayout = (LinearLayout)findViewById(R.id.l2_linearlayout);
+		gestureLayer = (FrameLayout)findViewById(R.id.gesture_button_layer);
+		appLayer = (LinearLayout)findViewById(R.id.app_layer);
 		
 		init();
 		
@@ -42,7 +39,7 @@ public class GestureButton extends Activity {
 	
 	private void funcTest(){
 		
-        ObjectAnimator anim = ObjectAnimator.ofFloat(linearLayout, "alpha", 0f, 1f, 0.5f, 1f);
+        ObjectAnimator anim = ObjectAnimator.ofFloat(appLayer, "alpha", 0f, 1f, 0.5f, 1f);
         anim.setDuration(4000);
 		anim.start();
 	}
@@ -51,42 +48,76 @@ public class GestureButton extends Activity {
 		
 		ObjectAnimator objectAnimator = (ObjectAnimator) AnimatorInflater.loadAnimator(this,
 			    R.animator.fade);
-		objectAnimator.setTarget(linearLayout);
+		objectAnimator.setTarget(appLayer);
 		objectAnimator.start();
 	}
 	private void ActionBarB1(){
 		//funcTest();
-		funcTest2();
+//		funcTest2();
+		
+		
 	}
 	
 	private void init() {
-		frameView.setOnTouchListener(new OnTouchListener() {
+		gestureLayer.setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				int action = MotionEventCompat.getActionMasked(event);
 
-				MyLog.d(MyLog.DEBUG, "=An event!");
+				MyLog.d(MyLog.DEBUG, "gestureLayer=An event!");
 
 				switch (action) {
 				case (MotionEvent.ACTION_DOWN):
-					MyLog.d(MyLog.DEBUG, "=Action was DOWN");
+					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was DOWN");
 					return false;
 				case (MotionEvent.ACTION_MOVE):
-					MyLog.d(MyLog.DEBUG, "=Action was MOVE");
+					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was MOVE");
 					return false;
 				case (MotionEvent.ACTION_UP):
-					MyLog.d(MyLog.DEBUG, "=Action was UP");
+					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was UP");
 					return false;
 				case (MotionEvent.ACTION_CANCEL):
-					MyLog.d(MyLog.DEBUG, "=Action was CANCEL");
+					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was CANCEL");
 					return false;
 				case (MotionEvent.ACTION_OUTSIDE):
-					MyLog.d(MyLog.DEBUG, "=Movement occurred outside bounds "
+					MyLog.d(MyLog.DEBUG, "gestureLayer=Movement occurred outside bounds "
 							+ "of current screen element");
 					return false;
 				default:
-					MyLog.d(MyLog.DEBUG, "=Action was unknown");
+					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was unknown");
+					return false;
+				}
+			}
+		});
+	
+		appLayer.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				int action = MotionEventCompat.getActionMasked(event);
+
+				MyLog.d(MyLog.DEBUG, "appLayer=An event!");
+
+				switch (action) {
+				case (MotionEvent.ACTION_DOWN):
+					MyLog.d(MyLog.DEBUG, "appLayer=Action was DOWN");
+					return false;
+				case (MotionEvent.ACTION_MOVE):
+					MyLog.d(MyLog.DEBUG, "appLayer=Action was MOVE");
+					return false;
+				case (MotionEvent.ACTION_UP):
+					MyLog.d(MyLog.DEBUG, "appLayer=Action was UP");
+					return false;
+				case (MotionEvent.ACTION_CANCEL):
+					MyLog.d(MyLog.DEBUG, "appLayer=Action was CANCEL");
+					return false;
+				case (MotionEvent.ACTION_OUTSIDE):
+					MyLog.d(MyLog.DEBUG, "appLayer=Movement occurred outside bounds "
+							+ "of current screen element");
+					return false;
+				default:
+					MyLog.d(MyLog.DEBUG, "appLayer=Action was unknown");
 					return false;
 				}
 			}
