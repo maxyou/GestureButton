@@ -6,17 +6,21 @@ import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.support.v4.view.MotionEventCompat;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class GestureButtonTest extends Activity {
 
-	FrameLayout gestureLayer;
+	GestureButtonLayout gestureLayer;
 	LinearLayout appLayer;
 	ActionBar actionBar;
 
@@ -27,10 +31,14 @@ public class GestureButtonTest extends Activity {
 
 		actionBar = getActionBar();
 
-		gestureLayer = (FrameLayout)findViewById(R.id.gesture_button_layer);
-		appLayer = (LinearLayout)findViewById(R.id.app_layer);
+		gestureLayer = (GestureButtonLayout)findViewById(R.id.gesture_button_layer);
+//		appLayer = (LinearLayout)findViewById(R.id.app_layer);
+		Button b = new Button(this);
+		b.setText("12345");
+//		appLayer.addView(b);
 		
-		init();
+		gestureLayer.addQuickButton(0, b);
+//		init();
 		
 		//funcTest();
 
@@ -51,13 +59,32 @@ public class GestureButtonTest extends Activity {
 		objectAnimator.setTarget(appLayer);
 		objectAnimator.start();
 	}
-	private void ActionBarB1(){
-		//funcTest();
-//		funcTest2();
+	
+	private void funcTest3(){
+
+		TextView tv = new TextView(this);
+		tv.setText("new");
 		
+		DisplayMetrics metrics = getResources().getDisplayMetrics();
+		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		params.setMargins(100, 200, 0, 0);
+//		params.setMargins(100, metrics.heightPixels - 20, 100, 0);
+		tv.setLayoutParams(params);
+		gestureLayer.addView(tv);
 		
 	}
+	private void funcTest4(){
+		
+		gestureLayer.removeAllViews();
+		
+	}	
+	private void ActionBarB1(){
+		funcTest3();
+	}
 	
+	private void ActionBarB2(){
+		funcTest4();
+	}
 	private void init() {
 		gestureLayer.setOnTouchListener(new OnTouchListener() {
 
@@ -70,23 +97,23 @@ public class GestureButtonTest extends Activity {
 				switch (action) {
 				case (MotionEvent.ACTION_DOWN):
 					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was DOWN");
-					return false;
+					return true;
 				case (MotionEvent.ACTION_MOVE):
 					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was MOVE");
-					return false;
+					return true;
 				case (MotionEvent.ACTION_UP):
 					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was UP");
-					return false;
+					return true;
 				case (MotionEvent.ACTION_CANCEL):
 					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was CANCEL");
-					return false;
+					return true;
 				case (MotionEvent.ACTION_OUTSIDE):
 					MyLog.d(MyLog.DEBUG, "gestureLayer=Movement occurred outside bounds "
 							+ "of current screen element");
-					return false;
+					return true;
 				default:
 					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was unknown");
-					return false;
+					return true;
 				}
 			}
 		});
@@ -102,23 +129,23 @@ public class GestureButtonTest extends Activity {
 				switch (action) {
 				case (MotionEvent.ACTION_DOWN):
 					MyLog.d(MyLog.DEBUG, "appLayer=Action was DOWN");
-					return false;
+					return true;
 				case (MotionEvent.ACTION_MOVE):
 					MyLog.d(MyLog.DEBUG, "appLayer=Action was MOVE");
-					return false;
+					return true;
 				case (MotionEvent.ACTION_UP):
 					MyLog.d(MyLog.DEBUG, "appLayer=Action was UP");
-					return false;
+					return true;
 				case (MotionEvent.ACTION_CANCEL):
 					MyLog.d(MyLog.DEBUG, "appLayer=Action was CANCEL");
-					return false;
+					return true;
 				case (MotionEvent.ACTION_OUTSIDE):
 					MyLog.d(MyLog.DEBUG, "appLayer=Movement occurred outside bounds "
 							+ "of current screen element");
-					return false;
+					return true;
 				default:
 					MyLog.d(MyLog.DEBUG, "appLayer=Action was unknown");
-					return false;
+					return true;
 				}
 			}
 		});
@@ -140,6 +167,10 @@ public class GestureButtonTest extends Activity {
 		case R.id.action_b1:
 			MyLog.d(MyLog.DEBUG, "ActionBar b1!");
 			ActionBarB1();
+			return true;
+		case R.id.action_b2:
+			MyLog.d(MyLog.DEBUG, "ActionBar b2!");
+			ActionBarB2();
 			return true;
 		case R.id.action_settings:
 			MyLog.d(MyLog.DEBUG, "ActionBar setting!");

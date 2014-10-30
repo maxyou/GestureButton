@@ -4,9 +4,12 @@
     <string name="app_name">GestureButton</string>
     <string name="action_settings">Settings</string>
     <string name="action_b1">B1</string>
+    <string name="action_b2">B2</string>
     <string name="hello_world">Hello world!</string>
     <string name="gesture_button_layer">This is gesture button layer!</string>
     
     <string name="fade_button">Fade In/Out</string>
+    
+    <string name="quick_button">quick button</string>
     
 </resources>

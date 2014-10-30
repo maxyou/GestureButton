@@ -5,6 +5,10 @@
         android:showAsAction="ifRoom"
         android:title="@string/action_b1"/>
     <item
+        android:id="@+id/action_b2"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_b2"/>
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"

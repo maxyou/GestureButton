@@ -1,249 +1,159 @@
 package com.maxproj.gesturebutton;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
-
 public class GestureButtonLayout extends FrameLayout {
+	Context mContext;
+	LinkedList<Button> qbl = new LinkedList<Button>();
+
+	int indexMax = 6;// 0 ~ indexMax-1
+	int mMoveCount = 0;
+
+	private void quickButtonInit() {
+		MyLog.d(MyLog.DEBUG, "quickButtonInit()");
+	}
+
+	public void addQuickButton(int index, Button b) {
+		MyLog.d(MyLog.DEBUG, "addQuickButton at index: "+index);
+		if (index >= indexMax) {
+			MyLog.d(MyLog.DEBUG, "index >= indexMax !!");
+			return;
+		}
+		qbl.add(index, b);
+
+		b.setVisibility(View.GONE);
+		this.addView(b, index);
+	}
+
+	private void quickButtonShow() {
+		MyLog.d(MyLog.DEBUG, "quickButtonShow()");
+		for (int i = 0; i < qbl.size(); i++) {
+			Button b = qbl.get(i);
+			if (b != null) {
+				LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				params.leftMargin = 100;
+				params.topMargin = 200 + 100*i;
+				b.setLayoutParams(params);
+				b.setVisibility(View.VISIBLE);
+			}
+		}
+		// invalidate();
+	}
+
+	private void quickButtonHide() {
+		MyLog.d(MyLog.DEBUG, "quickButtonHide()");
+		for (int i = 0; i < qbl.size(); i++) {
+			if (qbl.get(i) != null) {
+				qbl.get(i).setVisibility(View.GONE);
+			}
+		}
+		// invalidate();
+	}
+
+	/**
+	 * 这里需要保存轨迹 并且判断轨迹是否足够长 足够长则截断event的传播
+	 */
+
+	// public void addQuickButtonListener(int index, View.OnClickListener
+	// listener) {
+	// if ((index < 0) || (index >= indexMax)) {
+	// MyLog.d(MyLog.DEBUG, "(index < 0) || (index >= indexMax)");
+	// return;
+	// }
+	// }
+
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent event) {
+		MyLog.d(MyLog.DEBUG, "dispatchTouchEvent()! 1");
+		if (isEnabled()) {
+
+			/**
+			 * 注意这段处理逻辑 首先本层判断是否手势，如果是手势，设置ACTION_CANCEL，也即不再传播
+			 */
+
+			processEvent(event);
+
+			super.dispatchTouchEvent(event);
+			MyLog.d(MyLog.DEBUG, "dispatchTouchEvent()! 2");
+			return true;
+		}
+
+		return super.dispatchTouchEvent(event);
+	}
+
+	private boolean processEvent(MotionEvent event) {
+		switch (event.getAction()) {
+		case MotionEvent.ACTION_DOWN:
+			touchDown(event);
+			invalidate();
+			break;
+		case MotionEvent.ACTION_MOVE:
+			touchMove(event);
+			break;
+		case MotionEvent.ACTION_UP:
+			touchUp(event);
+			break;
+		case MotionEvent.ACTION_CANCEL:
+			break;
+		}
+
+		return false;
+	}
+
+	private void touchDown(MotionEvent event) {
+		mMoveCount = 0;
+
+		float x = event.getX();
+		float y = event.getY();
+
+	}
+
+	private void touchMove(MotionEvent event) {
+		mMoveCount++;
+		MyLog.d(MyLog.DEBUG, "mMoveCount: " + mMoveCount);
+
+		if (mMoveCount > 100) {
+			quickButtonShow();
+		}
+		final float x = event.getX();
+		final float y = event.getY();
+
+	}
+
+	private void touchUp(MotionEvent event) {
+		mMoveCount = 0;
+		quickButtonHide();
+	}
 
 	public GestureButtonLayout(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		// TODO Auto-generated constructor stub
+		MyLog.d(MyLog.DEBUG, "GestureButtonLayout(3)");
+		mContext = context;
+		quickButtonInit();
 	}
 
 	public GestureButtonLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		// TODO Auto-generated constructor stub
+		MyLog.d(MyLog.DEBUG, "GestureButtonLayout(2)");
+		mContext = context;
+		quickButtonInit();
 	}
 
-
-    public GestureButtonLayout(Context context) {
+	public GestureButtonLayout(Context context) {
 		super(context);
 		// TODO Auto-generated constructor stub
+		MyLog.d(MyLog.DEBUG, "GestureButtonLayout(1)");
+		mContext = context;
+		quickButtonInit();
 	}
-
-	@Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-    	MyLog.d(MyLog.DEBUG, "dispatchTouchEvent()!");
-        if (isEnabled()) {
-//            final boolean cancelDispatch = (mIsGesturing || (mCurrentGesture != null &&
-//                    mCurrentGesture.getStrokesCount() > 0 && mPreviousWasGesturing)) &&
-//                    mInterceptEvents;
-//
-//            processEvent(event);
-//
-//            if (cancelDispatch) {
-//                event.setAction(MotionEvent.ACTION_CANCEL);
-//            }
-
-            super.dispatchTouchEvent(event);
-
-            return true;
-        }
-
-        return super.dispatchTouchEvent(event);
-    }
-//
-//    private boolean processEvent(MotionEvent event) {
-//        switch (event.getAction()) {
-//            case MotionEvent.ACTION_DOWN:
-//                touchDown(event);
-//                invalidate();
-//                return true;
-//            case MotionEvent.ACTION_MOVE:
-//                if (mIsListeningForGestures) {
-//                    Rect rect = touchMove(event);
-//                    if (rect != null) {
-//                        invalidate(rect);
-//                    }
-//                    return true;
-//                }
-//                break;
-//            case MotionEvent.ACTION_UP:
-//                if (mIsListeningForGestures) {
-//                    touchUp(event, false);
-//                    invalidate();
-//                    return true;
-//                }
-//                break;
-//            case MotionEvent.ACTION_CANCEL:
-//                if (mIsListeningForGestures) {
-//                    touchUp(event, true);
-//                    invalidate();
-//                    return true;
-//                }
-//        }
-//
-//        return false;
-//    }
-//
-//    private void touchDown(MotionEvent event) {
-//        mIsListeningForGestures = true;
-//
-//        float x = event.getX();
-//        float y = event.getY();
-//
-//        mX = x;
-//        mY = y;
-//
-//        mTotalLength = 0;
-//        mIsGesturing = false;
-//
-//        if (mGestureStrokeType == GESTURE_STROKE_TYPE_SINGLE || mResetGesture) {
-//            if (mHandleGestureActions) setCurrentColor(mUncertainGestureColor);
-//            mResetGesture = false;
-//            mCurrentGesture = null;
-//            mPath.rewind();
-//        } else if (mCurrentGesture == null || mCurrentGesture.getStrokesCount() == 0) {
-//            if (mHandleGestureActions) setCurrentColor(mUncertainGestureColor);
-//        }
-//
-//        // if there is fading out going on, stop it.
-//        if (mFadingHasStarted) {
-//            cancelClearAnimation();
-//        } else if (mIsFadingOut) {
-//            setPaintAlpha(255);
-//            mIsFadingOut = false;
-//            mFadingHasStarted = false;
-//            removeCallbacks(mFadingOut);
-//        }
-//
-//        if (mCurrentGesture == null) {
-//            mCurrentGesture = new Gesture();
-//        }
-//
-//        mStrokeBuffer.add(new GesturePoint(x, y, event.getEventTime()));
-//        mPath.moveTo(x, y);
-//
-//        final int border = mInvalidateExtraBorder;
-//        mInvalidRect.set((int) x - border, (int) y - border, (int) x + border, (int) y + border);
-//
-//        mCurveEndX = x;
-//        mCurveEndY = y;
-//
-//        // pass the event to handlers
-//        final ArrayList<OnGestureListener> listeners = mOnGestureListeners;
-//        final int count = listeners.size();
-//        for (int i = 0; i < count; i++) {
-//            listeners.get(i).onGestureStarted(this, event);
-//        }
-//    }
-//
-//    private Rect touchMove(MotionEvent event) {
-//        Rect areaToRefresh = null;
-//
-//        final float x = event.getX();
-//        final float y = event.getY();
-//
-//        final float previousX = mX;
-//        final float previousY = mY;
-//
-//        final float dx = Math.abs(x - previousX);
-//        final float dy = Math.abs(y - previousY);
-//
-//        if (dx >= GestureStroke.TOUCH_TOLERANCE || dy >= GestureStroke.TOUCH_TOLERANCE) {
-//            areaToRefresh = mInvalidRect;
-//
-//            // start with the curve end
-//            final int border = mInvalidateExtraBorder;
-//            areaToRefresh.set((int) mCurveEndX - border, (int) mCurveEndY - border,
-//                    (int) mCurveEndX + border, (int) mCurveEndY + border);
-//
-//            float cX = mCurveEndX = (x + previousX) / 2;
-//            float cY = mCurveEndY = (y + previousY) / 2;
-//
-//            mPath.quadTo(previousX, previousY, cX, cY);
-//
-//            // union with the control point of the new curve
-//            areaToRefresh.union((int) previousX - border, (int) previousY - border,
-//                    (int) previousX + border, (int) previousY + border);
-//
-//            // union with the end point of the new curve
-//            areaToRefresh.union((int) cX - border, (int) cY - border,
-//                    (int) cX + border, (int) cY + border);
-//
-//            mX = x;
-//            mY = y;
-//
-//            mStrokeBuffer.add(new GesturePoint(x, y, event.getEventTime()));
-//
-//            if (mHandleGestureActions && !mIsGesturing) {
-//                mTotalLength += (float) Math.hypot(dx, dy);
-//
-//                if (mTotalLength > mGestureStrokeLengthThreshold) {
-//                    final OrientedBoundingBox box =
-//                            GestureUtils.computeOrientedBoundingBox(mStrokeBuffer);
-//
-//                    float angle = Math.abs(box.orientation);
-//                    if (angle > 90) {
-//                        angle = 180 - angle;
-//                    }
-//
-//                    if (box.squareness > mGestureStrokeSquarenessTreshold ||
-//                            (mOrientation == ORIENTATION_VERTICAL ?
-//                                    angle < mGestureStrokeAngleThreshold :
-//                                    angle > mGestureStrokeAngleThreshold)) {
-//
-//                        mIsGesturing = true;
-//                        setCurrentColor(mCertainGestureColor);
-//
-//                        final ArrayList<OnGesturingListener> listeners = mOnGesturingListeners;
-//                        int count = listeners.size();
-//                        for (int i = 0; i < count; i++) {
-//                            listeners.get(i).onGesturingStarted(this);
-//                        }
-//                    }
-//                }
-//            }
-//
-//            // pass the event to handlers
-//            final ArrayList<OnGestureListener> listeners = mOnGestureListeners;
-//            final int count = listeners.size();
-//            for (int i = 0; i < count; i++) {
-//                listeners.get(i).onGesture(this, event);
-//            }
-//        }
-//
-//        return areaToRefresh;
-//    }
-//
-//    private void touchUp(MotionEvent event, boolean cancel) {
-//        mIsListeningForGestures = false;
-//
-//        // A gesture wasn't started or was cancelled
-//        if (mCurrentGesture != null) {
-//            // add the stroke to the current gesture
-//            mCurrentGesture.addStroke(new GestureStroke(mStrokeBuffer));
-//
-//            if (!cancel) {
-//                // pass the event to handlers
-//                final ArrayList<OnGestureListener> listeners = mOnGestureListeners;
-//                int count = listeners.size();
-//                for (int i = 0; i < count; i++) {
-//                    listeners.get(i).onGestureEnded(this, event);
-//                }
-//
-//                clear(mHandleGestureActions && mFadeEnabled, mHandleGestureActions && mIsGesturing,
-//                        false);
-//            } else {
-//                cancelGesture(event);
-//
-//            }
-//        } else {
-//            cancelGesture(event);
-//        }
-//
-//        mStrokeBuffer.clear();
-//        mPreviousWasGesturing = mIsGesturing;
-//        mIsGesturing = false;
-//
-//        final ArrayList<OnGesturingListener> listeners = mOnGesturingListeners;
-//        int count = listeners.size();
-//        for (int i = 0; i < count; i++) {
-//            listeners.get(i).onGesturingEnded(this);
-//        }
-//    }
-
 }

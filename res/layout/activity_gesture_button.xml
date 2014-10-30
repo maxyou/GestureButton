@@ -8,22 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <LinearLayout
-            android:id="@+id/app_layer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
 
-            <Button
-                android:id="@+id/b1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fade_button" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/hello_world" />
-        </LinearLayout>
+        
+        
     </com.maxproj.gesturebutton.GestureButtonLayout>
 
 </LinearLayout>
