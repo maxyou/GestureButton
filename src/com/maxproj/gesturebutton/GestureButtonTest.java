@@ -2,6 +2,7 @@ package com.maxproj.gesturebutton;
 
 import java.util.LinkedList;
 
+import com.maxproj.gesturebutton.GestureButtonLayout.MovePath;
 import com.maxproj.gesturebutton.GestureButtonLayout.OnImageButtonChangeListener;
 
 import android.os.Bundle;
@@ -56,14 +57,23 @@ public class GestureButtonTest extends Activity {
 				.setImageButtonChangeListener(new OnImageButtonChangeListener() {
 
 					@Override
-					public void onImageButtonChange(boolean b) {
+					public void onImageButtonChange(boolean b, LinkedList<MovePath> mpl) {
 						// TODO Auto-generated method stub
 
-						for (ImageButton ib : ibl) {
-							if (b)
+						for (int i = 0; i<ibl.size();i++) {
+							ImageButton ib = ibl.get(i);
+							if (b){
+								LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+								params.leftMargin = Math.round(mpl.get(i*10).x);
+								params.topMargin = Math.round(mpl.get(i*10).y);	
+								params.width = 50;
+								params.height = 50;
+								ib.setLayoutParams(params);
 								ib.setVisibility(View.VISIBLE);
-							else
+							}
+							else{
 								ib.setVisibility(View.INVISIBLE);
+							}
 						}
 
 					}

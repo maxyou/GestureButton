@@ -17,9 +17,14 @@ public class GestureButtonLayout extends FrameLayout {
 	int indexMax = 6;
 	int mMoveCount = 0;
 
+	class MovePath{
+		float x;
+		float y;
+	}
+	LinkedList<MovePath> mpl = new LinkedList<MovePath>();
 	
     public interface OnImageButtonChangeListener {
-        void onImageButtonChange(boolean b);
+        void onImageButtonChange(boolean b, LinkedList<MovePath> mpl);
     }
 	
     OnImageButtonChangeListener mListener;
@@ -120,10 +125,7 @@ public class GestureButtonLayout extends FrameLayout {
 
 	private void touchDown(MotionEvent event) {
 		mMoveCount = 0;
-
-		float x = event.getX();
-		float y = event.getY();
-
+		mpl.clear();
 	}
 
 	private void touchMove(MotionEvent event) {
@@ -132,17 +134,18 @@ public class GestureButtonLayout extends FrameLayout {
 
 		if (mMoveCount > 60) {
 //			quickButtonShow();
-			mListener.onImageButtonChange(true);
+			mListener.onImageButtonChange(true, mpl);
 		}
-		final float x = event.getX();
-		final float y = event.getY();
-
+		MovePath mp = new MovePath();
+		mp.x = event.getX();
+		mp.y = event.getY();
+		mpl.add(mp);
 	}
 
 	private void touchUp(MotionEvent event) {
 		mMoveCount = 0;
 //		quickButtonHide();
-		mListener.onImageButtonChange(false);
+		mListener.onImageButtonChange(false, null);
 	}
 
 	public GestureButtonLayout(Context context, AttributeSet attrs, int defStyle) {
