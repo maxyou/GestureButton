@@ -8,14 +8,26 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
 public class GestureButtonLayout extends FrameLayout {
 	Context mContext;
 	LinkedList<Button> qbl = new LinkedList<Button>();
 
-	int indexMax = 6;// 0 ~ indexMax-1
+	int indexMax = 6;
 	int mMoveCount = 0;
 
+	
+    public interface OnImageButtonChangeListener {
+        void onImageButtonChange(boolean b);
+    }
+	
+    OnImageButtonChangeListener mListener;
+    
+	public void setImageButtonChangeListener(OnImageButtonChangeListener l){
+		mListener = l;
+	}
+	
 	private void quickButtonInit() {
 		MyLog.d(MyLog.DEBUG, "quickButtonInit()");
 	}
@@ -27,7 +39,7 @@ public class GestureButtonLayout extends FrameLayout {
 			return;
 		}
 		b.setVisibility(View.GONE);
-		this.addView(b,qbl.size());
+//		this.addView(b,qbl.size());
 		qbl.add(b);
 	}
 
@@ -119,7 +131,8 @@ public class GestureButtonLayout extends FrameLayout {
 		MyLog.d(MyLog.DEBUG, "mMoveCount: " + mMoveCount);
 
 		if (mMoveCount > 60) {
-			quickButtonShow();
+//			quickButtonShow();
+			mListener.onImageButtonChange(true);
 		}
 		final float x = event.getX();
 		final float y = event.getY();
@@ -128,7 +141,8 @@ public class GestureButtonLayout extends FrameLayout {
 
 	private void touchUp(MotionEvent event) {
 		mMoveCount = 0;
-		quickButtonHide();
+//		quickButtonHide();
+		mListener.onImageButtonChange(false);
 	}
 
 	public GestureButtonLayout(Context context, AttributeSet attrs, int defStyle) {

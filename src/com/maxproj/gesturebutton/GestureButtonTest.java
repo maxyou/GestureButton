@@ -1,5 +1,9 @@
 package com.maxproj.gesturebutton;
 
+import java.util.LinkedList;
+
+import com.maxproj.gesturebutton.GestureButtonLayout.OnImageButtonChangeListener;
+
 import android.os.Bundle;
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
@@ -32,65 +36,99 @@ public class GestureButtonTest extends Activity {
 
 		actionBar = getActionBar();
 
-		gestureLayer = (GestureButtonLayout)findViewById(R.id.gesture_button_layer);
-		appLayer = (LinearLayout)findViewById(R.id.app_layer);
-		
+		gestureLayer = (GestureButtonLayout) findViewById(R.id.gesture_button_layer);
 
-		
-//		Button b = new Button(this);
-//		b.setText("1");
-//		gestureLayer.addQuickButton(b);
-//		b.setText("2");
-//		gestureLayer.addQuickButton(b);
-//		b.setText("3");
-//		gestureLayer.addQuickButton(b);
-//		init();
-		
-		//funcTest();
+		final LinkedList<ImageButton> ibl = new LinkedList<ImageButton>();
+		ImageButton ib0 = (ImageButton) findViewById(R.id.qb0);
+		ibl.add(ib0);
+		ImageButton ib1 = (ImageButton) findViewById(R.id.qb1);
+		ibl.add(ib1);
+		ImageButton ib2 = (ImageButton) findViewById(R.id.qb2);
+		ibl.add(ib2);
+		ImageButton ib3 = (ImageButton) findViewById(R.id.qb3);
+		ibl.add(ib3);
+		ImageButton ib4 = (ImageButton) findViewById(R.id.qb4);
+		ibl.add(ib4);
+		ImageButton ib5 = (ImageButton) findViewById(R.id.qb5);
+		ibl.add(ib5);
+
+		gestureLayer
+				.setImageButtonChangeListener(new OnImageButtonChangeListener() {
+
+					@Override
+					public void onImageButtonChange(boolean b) {
+						// TODO Auto-generated method stub
+
+						for (ImageButton ib : ibl) {
+							if (b)
+								ib.setVisibility(View.VISIBLE);
+							else
+								ib.setVisibility(View.INVISIBLE);
+						}
+
+					}
+				});
+
+		// appLayer = (LinearLayout)findViewById(R.id.app_layer);
+
+		// Button b = new Button(this);
+		// b.setText("1");
+		// gestureLayer.addQuickButton(b);
+		// b.setText("2");
+		// gestureLayer.addQuickButton(b);
+		// b.setText("3");
+		// gestureLayer.addQuickButton(b);
+		// init();
+
+		// funcTest();
 
 	}
 
-	
-	private void funcTest(){
-		
-        ObjectAnimator anim = ObjectAnimator.ofFloat(appLayer, "alpha", 0f, 1f, 0.5f, 1f);
-        anim.setDuration(4000);
+	private void funcTest() {
+
+		ObjectAnimator anim = ObjectAnimator.ofFloat(appLayer, "alpha", 0f, 1f,
+				0.5f, 1f);
+		anim.setDuration(4000);
 		anim.start();
 	}
-	
-	private void funcTest2(){
-		
-		ObjectAnimator objectAnimator = (ObjectAnimator) AnimatorInflater.loadAnimator(this,
-			    R.animator.fade);
+
+	private void funcTest2() {
+
+		ObjectAnimator objectAnimator = (ObjectAnimator) AnimatorInflater
+				.loadAnimator(this, R.animator.fade);
 		objectAnimator.setTarget(appLayer);
 		objectAnimator.start();
 	}
-	
-	private void funcTest3(){
+
+	private void funcTest3() {
 
 		TextView tv = new TextView(this);
 		tv.setText("new");
-		
+
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
-		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT);
 		params.setMargins(100, 200, 0, 0);
-//		params.setMargins(100, metrics.heightPixels - 20, 100, 0);
+		// params.setMargins(100, metrics.heightPixels - 20, 100, 0);
 		tv.setLayoutParams(params);
 		gestureLayer.addView(tv);
-		
+
 	}
-	private void funcTest4(){
-		
+
+	private void funcTest4() {
+
 		gestureLayer.removeAllViews();
-		
-	}	
-	private void ActionBarB1(){
+
+	}
+
+	private void ActionBarB1() {
 		funcTest3();
 	}
-	
-	private void ActionBarB2(){
+
+	private void ActionBarB2() {
 		funcTest4();
 	}
+
 	private void init() {
 		gestureLayer.setOnTouchListener(new OnTouchListener() {
 
@@ -114,8 +152,9 @@ public class GestureButtonTest extends Activity {
 					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was CANCEL");
 					return true;
 				case (MotionEvent.ACTION_OUTSIDE):
-					MyLog.d(MyLog.DEBUG, "gestureLayer=Movement occurred outside bounds "
-							+ "of current screen element");
+					MyLog.d(MyLog.DEBUG,
+							"gestureLayer=Movement occurred outside bounds "
+									+ "of current screen element");
 					return true;
 				default:
 					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was unknown");
@@ -123,7 +162,7 @@ public class GestureButtonTest extends Activity {
 				}
 			}
 		});
-	
+
 		appLayer.setOnTouchListener(new OnTouchListener() {
 
 			@Override
@@ -146,8 +185,9 @@ public class GestureButtonTest extends Activity {
 					MyLog.d(MyLog.DEBUG, "appLayer=Action was CANCEL");
 					return true;
 				case (MotionEvent.ACTION_OUTSIDE):
-					MyLog.d(MyLog.DEBUG, "appLayer=Movement occurred outside bounds "
-							+ "of current screen element");
+					MyLog.d(MyLog.DEBUG,
+							"appLayer=Movement occurred outside bounds "
+									+ "of current screen element");
 					return true;
 				default:
 					MyLog.d(MyLog.DEBUG, "appLayer=Action was unknown");
@@ -157,8 +197,6 @@ public class GestureButtonTest extends Activity {
 		});
 	}
 
-
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -185,6 +223,5 @@ public class GestureButtonTest extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
 
 }
