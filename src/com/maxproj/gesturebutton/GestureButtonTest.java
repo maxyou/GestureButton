@@ -15,6 +15,7 @@ import android.view.View.OnTouchListener;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,12 +33,17 @@ public class GestureButtonTest extends Activity {
 		actionBar = getActionBar();
 
 		gestureLayer = (GestureButtonLayout)findViewById(R.id.gesture_button_layer);
-//		appLayer = (LinearLayout)findViewById(R.id.app_layer);
-		Button b = new Button(this);
-		b.setText("12345");
-//		appLayer.addView(b);
+		appLayer = (LinearLayout)findViewById(R.id.app_layer);
 		
-		gestureLayer.addQuickButton(0, b);
+
+		
+//		Button b = new Button(this);
+//		b.setText("1");
+//		gestureLayer.addQuickButton(b);
+//		b.setText("2");
+//		gestureLayer.addQuickButton(b);
+//		b.setText("3");
+//		gestureLayer.addQuickButton(b);
 //		init();
 		
 		//funcTest();

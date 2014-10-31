@@ -1,6 +1,5 @@
 package com.maxproj.gesturebutton;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import android.content.Context;
@@ -21,16 +20,15 @@ public class GestureButtonLayout extends FrameLayout {
 		MyLog.d(MyLog.DEBUG, "quickButtonInit()");
 	}
 
-	public void addQuickButton(int index, Button b) {
-		MyLog.d(MyLog.DEBUG, "addQuickButton at index: "+index);
-		if (index >= indexMax) {
-			MyLog.d(MyLog.DEBUG, "index >= indexMax !!");
+	public void addQuickButton(Button b) {
+		MyLog.d(MyLog.DEBUG, "addQuickButton !");
+		if (qbl.size() >= indexMax) {
+			MyLog.d(MyLog.DEBUG, "size >= indexMax !!");
 			return;
 		}
-		qbl.add(index, b);
-
 		b.setVisibility(View.GONE);
-		this.addView(b, index);
+		this.addView(b,qbl.size());
+		qbl.add(b);
 	}
 
 	private void quickButtonShow() {
@@ -120,7 +118,7 @@ public class GestureButtonLayout extends FrameLayout {
 		mMoveCount++;
 		MyLog.d(MyLog.DEBUG, "mMoveCount: " + mMoveCount);
 
-		if (mMoveCount > 100) {
+		if (mMoveCount > 60) {
 			quickButtonShow();
 		}
 		final float x = event.getX();

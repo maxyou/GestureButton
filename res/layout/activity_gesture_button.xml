@@ -8,9 +8,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
+        <LinearLayout
+            android:id="@+id/app_layer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
 
-        
-        
+            <ImageButton
+                android:id="@+id/button1"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/qb0" >
+            </ImageButton>
+        </LinearLayout>
     </com.maxproj.gesturebutton.GestureButtonLayout>
 
 </LinearLayout>
