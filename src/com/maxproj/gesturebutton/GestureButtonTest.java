@@ -2,8 +2,9 @@ package com.maxproj.gesturebutton;
 
 import java.util.LinkedList;
 
-import com.maxproj.gesturebutton.GestureButtonLayout.MovePath;
-import com.maxproj.gesturebutton.GestureButtonLayout.OnImageButtonChangeListener;
+import com.maxproj.gesturebutton.GestureButtonLayout.OnOverLayerTouchDownListener;
+import com.maxproj.gesturebutton.GestureButtonLayout.OnOverLayerTouchMoveListener;
+import com.maxproj.gesturebutton.GestureButtonLayout.OnOverLayerTouchUpListener;
 
 import android.os.Bundle;
 import android.animation.AnimatorInflater;
@@ -17,9 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,6 +28,14 @@ public class GestureButtonTest extends Activity {
 	GestureButtonLayout gestureLayer;
 	LinearLayout appLayer;
 	ActionBar actionBar;
+
+	class MovePath {
+		float x;
+		float y;
+	}
+
+	LinkedList<MovePath> mpl = new LinkedList<MovePath>();
+	int moveThreshold = 5;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,25 +61,63 @@ public class GestureButtonTest extends Activity {
 		ibl.add(ib5);
 
 		gestureLayer
-				.setImageButtonChangeListener(new OnImageButtonChangeListener() {
+				.setOverLayerTouchDownListener(new OnOverLayerTouchDownListener() {
 
 					@Override
-					public void onImageButtonChange(boolean b, LinkedList<MovePath> mpl) {
+					public void onOverLayerTouchDown() {
 						// TODO Auto-generated method stub
+						mpl.clear();
+					}
+				});
+		gestureLayer
+				.setOverLayerTouchUpListener(new OnOverLayerTouchUpListener() {
 
-						for (int i = 0; i<ibl.size();i++) {
+					@Override
+					public void onOverLayerTouchUp() {
+						// TODO Auto-generated method stub
+						// TODO Auto-generated method stub
+						for (int i = 0; i < ibl.size(); i++) {
 							ImageButton ib = ibl.get(i);
-							if (b){
-								LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-								params.leftMargin = Math.round(mpl.get(i*10).x);
-								params.topMargin = Math.round(mpl.get(i*10).y);	
-								params.width = 50;
-								params.height = 50;
-								ib.setLayoutParams(params);
-								ib.setVisibility(View.VISIBLE);
-							}
-							else{
+							if (ib.getVisibility() != View.INVISIBLE) {
 								ib.setVisibility(View.INVISIBLE);
+							}
+						}
+						mpl.clear();
+					}
+				});
+		gestureLayer
+				.setOverLayerTouchMoveListener(new OnOverLayerTouchMoveListener() {
+
+					@Override
+					public void onOverLayerTouchMove(float x, float y) {
+						
+						/**
+						 * 保存一下轨迹，或许扩展需要
+						 */
+						MovePath mp = new MovePath();
+						mp.x = x;
+						mp.y = y;
+						mpl.add(mp);
+
+						for (int i = 0; i < ibl.size(); i++) {
+							if (mpl.size() == moveThreshold + (i * 5)) {
+								ImageButton ib = ibl.get(i);
+								if (ib.getVisibility() != View.VISIBLE) {
+									LayoutParams params = new LayoutParams(
+											LayoutParams.WRAP_CONTENT,
+											LayoutParams.WRAP_CONTENT);
+									params.leftMargin = Math.round(x);
+									params.topMargin = Math.round(y);
+									params.width = 80;
+									params.height = 80;
+									ib.setLayoutParams(params);
+									ib.setAlpha(0f);
+									ib.setVisibility(View.VISIBLE);
+									ObjectAnimator anim = ObjectAnimator
+											.ofFloat(ib, "alpha", 0f, 1f);
+									anim.setDuration(500);
+									anim.start();
+								}
 							}
 						}
 
