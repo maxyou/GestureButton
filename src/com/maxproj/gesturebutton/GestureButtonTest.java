@@ -8,7 +8,10 @@ import com.maxproj.gesturebutton.GestureButtonLayout.OnOverLayerTouchUpListener;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -36,8 +39,22 @@ public class GestureButtonTest extends Activity {
 	}
 
 	LinkedList<MovePath> mpl = new LinkedList<MovePath>();
-	int moveThreshold = 5;
+	final LinkedList<ImageButton> ibl = new LinkedList<ImageButton>();
+	int moveThreshold = 5;//稍微move一段之后出现按钮
 
+	class AnimatorListenerOfObj implements AnimatorListener{
+		Object mObj;		
+		public AnimatorListenerOfObj(Object obj){mObj = obj;}		
+		@Override
+		public void onAnimationStart(Animator animation) {}
+		@Override
+		public void onAnimationEnd(Animator animation) {((View) mObj).setVisibility(View.INVISIBLE);}
+		@Override
+		public void onAnimationCancel(Animator animation) {}
+		@Override
+		public void onAnimationRepeat(Animator animation) {}		
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,7 +64,6 @@ public class GestureButtonTest extends Activity {
 
 		gestureLayer = (GestureButtonLayout) findViewById(R.id.gesture_button_layer);
 
-		final LinkedList<ImageButton> ibl = new LinkedList<ImageButton>();
 		ImageButton ib0 = (ImageButton) findViewById(R.id.qb0);
 		ibl.add(ib0);
 		ImageButton ib1 = (ImageButton) findViewById(R.id.qb1);
@@ -82,14 +98,18 @@ public class GestureButtonTest extends Activity {
 			                @Override
 			                public void run() {
 								for (int i = 0; i < ibl.size(); i++) {
-									ImageButton ib = ibl.get(i);
+									final ImageButton ib = ibl.get(i);
 									if (ib.getVisibility() != View.INVISIBLE) {
-										ib.setVisibility(View.INVISIBLE);
+										ObjectAnimator anim = ObjectAnimator
+												.ofFloat(ib, "alpha", 1f, 0f);
+										anim.setDuration(500);
+										anim.addListener(new AnimatorListenerOfObj(ib));
+										anim.start();
 									}
 								}
 								mpl.clear();
 			                }
-			            }, 2000);
+			            }, 1000);
 					}
 				});
 		gestureLayer
