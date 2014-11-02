@@ -7,6 +7,7 @@ import com.maxproj.gesturebutton.GestureButtonLayout.OnOverLayerTouchMoveListene
 import com.maxproj.gesturebutton.GestureButtonLayout.OnOverLayerTouchUpListener;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
@@ -76,13 +77,19 @@ public class GestureButtonTest extends Activity {
 					public void onOverLayerTouchUp() {
 						// TODO Auto-generated method stub
 						// TODO Auto-generated method stub
-						for (int i = 0; i < ibl.size(); i++) {
-							ImageButton ib = ibl.get(i);
-							if (ib.getVisibility() != View.INVISIBLE) {
-								ib.setVisibility(View.INVISIBLE);
-							}
-						}
-						mpl.clear();
+			            new Handler().postDelayed(new Runnable() {
+
+			                @Override
+			                public void run() {
+								for (int i = 0; i < ibl.size(); i++) {
+									ImageButton ib = ibl.get(i);
+									if (ib.getVisibility() != View.INVISIBLE) {
+										ib.setVisibility(View.INVISIBLE);
+									}
+								}
+								mpl.clear();
+			                }
+			            }, 2000);
 					}
 				});
 		gestureLayer
