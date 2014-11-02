@@ -10,22 +10,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.support.v4.view.MotionEventCompat;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
+import android.view.View.OnClickListener;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 public class GestureButtonTest extends Activity {
 
@@ -40,49 +35,110 @@ public class GestureButtonTest extends Activity {
 
 	LinkedList<MovePath> mpl = new LinkedList<MovePath>();
 	final LinkedList<ImageButton> ibl = new LinkedList<ImageButton>();
-	int moveThreshold = 5;//稍微move一段之后出现按钮
+	int moveThreshold = 5;// 稍微move一段之后出现按钮
+	static int buttonDelayAndAnimation = 0;
 
-	class AnimatorListenerOfObj implements AnimatorListener{
-		Object mObj;		
-		public AnimatorListenerOfObj(Object obj){mObj = obj;}		
+	class AnimatorListenerOfObj implements AnimatorListener {
+		Object mObj;
+
+		public AnimatorListenerOfObj(Object obj) {
+			mObj = obj;
+		}
+
 		@Override
-		public void onAnimationStart(Animator animation) {}
+		public void onAnimationStart(Animator animation) {
+		}
+
 		@Override
-		public void onAnimationEnd(Animator animation) {((View) mObj).setVisibility(View.INVISIBLE);}
+		public void onAnimationEnd(Animator animation) {
+			((View) mObj).setVisibility(View.INVISIBLE);
+			if (buttonDelayAndAnimation > 0) {
+				buttonDelayAndAnimation--;
+			}
+		}
+
 		@Override
-		public void onAnimationCancel(Animator animation) {}
+		public void onAnimationCancel(Animator animation) {
+		}
+
 		@Override
-		public void onAnimationRepeat(Animator animation) {}		
+		public void onAnimationRepeat(Animator animation) {
+		}
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_gesture_button);
 
+		{// 保存上下文
+			MyConfig.app = getApplicationContext();
+			MyConfig.gestureButton = this;
+		}
+
 		actionBar = getActionBar();
 
-		gestureLayer = (GestureButtonLayout) findViewById(R.id.gesture_button_layer);
-
 		ImageButton ib0 = (ImageButton) findViewById(R.id.qb0);
+		ib0.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(MyConfig.app, "button 0 is pressed",
+						Toast.LENGTH_LONG).show();
+			}
+		});
 		ibl.add(ib0);
 		ImageButton ib1 = (ImageButton) findViewById(R.id.qb1);
+		ib1.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(MyConfig.app, "button 1 is pressed",
+						Toast.LENGTH_LONG).show();
+			}
+		});
 		ibl.add(ib1);
 		ImageButton ib2 = (ImageButton) findViewById(R.id.qb2);
+		ib2.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(MyConfig.app, "button 2 is pressed",
+						Toast.LENGTH_LONG).show();
+			}
+		});
 		ibl.add(ib2);
 		ImageButton ib3 = (ImageButton) findViewById(R.id.qb3);
+		ib3.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(MyConfig.app, "button 3 is pressed",
+						Toast.LENGTH_LONG).show();
+			}
+		});
 		ibl.add(ib3);
 		ImageButton ib4 = (ImageButton) findViewById(R.id.qb4);
+		ib4.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(MyConfig.app, "button 4 is pressed",
+						Toast.LENGTH_LONG).show();
+			}
+		});
 		ibl.add(ib4);
 		ImageButton ib5 = (ImageButton) findViewById(R.id.qb5);
+		ib5.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(MyConfig.app, "button 5 is pressed",
+						Toast.LENGTH_LONG).show();
+			}
+		});
 		ibl.add(ib5);
 
+		gestureLayer = (GestureButtonLayout) findViewById(R.id.gesture_button_layer);
 		gestureLayer
 				.setOverLayerTouchDownListener(new OnOverLayerTouchDownListener() {
 
 					@Override
 					public void onOverLayerTouchDown() {
-						// TODO Auto-generated method stub
 						mpl.clear();
 					}
 				});
@@ -91,25 +147,42 @@ public class GestureButtonTest extends Activity {
 
 					@Override
 					public void onOverLayerTouchUp() {
-						// TODO Auto-generated method stub
-						// TODO Auto-generated method stub
-			            new Handler().postDelayed(new Runnable() {
-
-			                @Override
-			                public void run() {
-								for (int i = 0; i < ibl.size(); i++) {
-									final ImageButton ib = ibl.get(i);
-									if (ib.getVisibility() != View.INVISIBLE) {
-										ObjectAnimator anim = ObjectAnimator
-												.ofFloat(ib, "alpha", 1f, 0f);
-										anim.setDuration(500);
-										anim.addListener(new AnimatorListenerOfObj(ib));
-										anim.start();
-									}
+						MyLog.d(MyLog.DEBUG,
+								"buttonDelayAndAnimation when UP: "
+										+ buttonDelayAndAnimation);
+						if (buttonDelayAndAnimation == 0) {
+							/**
+							 * 统计这次UP会添加几个buttonDelayAndAnimation
+							 * 这是假定1秒钟后button的visibilty不变
+							 * 在极端的情况下，第二次滑动极快，或许导致问题
+							 * 但没必要考虑
+							 */
+							for (int i = 0; i < ibl.size(); i++) {								
+								if (ibl.get(i).getVisibility() != View.INVISIBLE) {
+									buttonDelayAndAnimation++;									
 								}
-								mpl.clear();
-			                }
-			            }, 1000);
+							}
+
+							new Handler().postDelayed(new Runnable() {
+
+								@Override
+								public void run() {
+									for (int i = 0; i < ibl.size(); i++) {
+										ImageButton ib = ibl.get(i);
+										if (ib.getVisibility() != View.INVISIBLE) {
+											ObjectAnimator anim = ObjectAnimator
+													.ofFloat(ib, "alpha", 1f,
+															0f);
+											anim.setDuration(500);
+											anim.addListener(new AnimatorListenerOfObj(
+													ib));
+											anim.start();
+										}
+									}
+									mpl.clear();
+								}
+							}, 1000);
+						}
 					}
 				});
 		gestureLayer
@@ -117,9 +190,9 @@ public class GestureButtonTest extends Activity {
 
 					@Override
 					public void onOverLayerTouchMove(float x, float y) {
-						
+
 						/**
-						 * 保存一下轨迹，或许扩展需要
+						 * 保存一下轨迹，或许以后扩展需要
 						 */
 						MovePath mp = new MovePath();
 						mp.x = x;
@@ -151,132 +224,6 @@ public class GestureButtonTest extends Activity {
 					}
 				});
 
-		// appLayer = (LinearLayout)findViewById(R.id.app_layer);
-
-		// Button b = new Button(this);
-		// b.setText("1");
-		// gestureLayer.addQuickButton(b);
-		// b.setText("2");
-		// gestureLayer.addQuickButton(b);
-		// b.setText("3");
-		// gestureLayer.addQuickButton(b);
-		// init();
-
-		// funcTest();
-
-	}
-
-	private void funcTest() {
-
-		ObjectAnimator anim = ObjectAnimator.ofFloat(appLayer, "alpha", 0f, 1f,
-				0.5f, 1f);
-		anim.setDuration(4000);
-		anim.start();
-	}
-
-	private void funcTest2() {
-
-		ObjectAnimator objectAnimator = (ObjectAnimator) AnimatorInflater
-				.loadAnimator(this, R.animator.fade);
-		objectAnimator.setTarget(appLayer);
-		objectAnimator.start();
-	}
-
-	private void funcTest3() {
-
-		TextView tv = new TextView(this);
-		tv.setText("new");
-
-		DisplayMetrics metrics = getResources().getDisplayMetrics();
-		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT);
-		params.setMargins(100, 200, 0, 0);
-		// params.setMargins(100, metrics.heightPixels - 20, 100, 0);
-		tv.setLayoutParams(params);
-		gestureLayer.addView(tv);
-
-	}
-
-	private void funcTest4() {
-
-		gestureLayer.removeAllViews();
-
-	}
-
-	private void ActionBarB1() {
-		funcTest3();
-	}
-
-	private void ActionBarB2() {
-		funcTest4();
-	}
-
-	private void init() {
-		gestureLayer.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				int action = MotionEventCompat.getActionMasked(event);
-
-				MyLog.d(MyLog.DEBUG, "gestureLayer=An event!");
-
-				switch (action) {
-				case (MotionEvent.ACTION_DOWN):
-					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was DOWN");
-					return true;
-				case (MotionEvent.ACTION_MOVE):
-					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was MOVE");
-					return true;
-				case (MotionEvent.ACTION_UP):
-					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was UP");
-					return true;
-				case (MotionEvent.ACTION_CANCEL):
-					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was CANCEL");
-					return true;
-				case (MotionEvent.ACTION_OUTSIDE):
-					MyLog.d(MyLog.DEBUG,
-							"gestureLayer=Movement occurred outside bounds "
-									+ "of current screen element");
-					return true;
-				default:
-					MyLog.d(MyLog.DEBUG, "gestureLayer=Action was unknown");
-					return true;
-				}
-			}
-		});
-
-		appLayer.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				int action = MotionEventCompat.getActionMasked(event);
-
-				MyLog.d(MyLog.DEBUG, "appLayer=An event!");
-
-				switch (action) {
-				case (MotionEvent.ACTION_DOWN):
-					MyLog.d(MyLog.DEBUG, "appLayer=Action was DOWN");
-					return true;
-				case (MotionEvent.ACTION_MOVE):
-					MyLog.d(MyLog.DEBUG, "appLayer=Action was MOVE");
-					return true;
-				case (MotionEvent.ACTION_UP):
-					MyLog.d(MyLog.DEBUG, "appLayer=Action was UP");
-					return true;
-				case (MotionEvent.ACTION_CANCEL):
-					MyLog.d(MyLog.DEBUG, "appLayer=Action was CANCEL");
-					return true;
-				case (MotionEvent.ACTION_OUTSIDE):
-					MyLog.d(MyLog.DEBUG,
-							"appLayer=Movement occurred outside bounds "
-									+ "of current screen element");
-					return true;
-				default:
-					MyLog.d(MyLog.DEBUG, "appLayer=Action was unknown");
-					return true;
-				}
-			}
-		});
 	}
 
 	@Override
@@ -290,14 +237,6 @@ public class GestureButtonTest extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
-		case R.id.action_b1:
-			MyLog.d(MyLog.DEBUG, "ActionBar b1!");
-			ActionBarB1();
-			return true;
-		case R.id.action_b2:
-			MyLog.d(MyLog.DEBUG, "ActionBar b2!");
-			ActionBarB2();
-			return true;
 		case R.id.action_settings:
 			MyLog.d(MyLog.DEBUG, "ActionBar setting!");
 			return true;

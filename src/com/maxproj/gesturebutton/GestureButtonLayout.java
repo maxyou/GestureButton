@@ -53,7 +53,7 @@ public class GestureButtonLayout extends FrameLayout {
 		case MotionEvent.ACTION_UP:
 			touchUp(event);
 			break;
-		case MotionEvent.ACTION_CANCEL:
+		case MotionEvent.ACTION_CANCEL:			
 			break;
 		}
 		return false;
@@ -79,7 +79,7 @@ public class GestureButtonLayout extends FrameLayout {
 
 	public GestureButtonLayout(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		// TODO Auto-generated constructor stub
+
 		MyLog.d(MyLog.DEBUG, "GestureButtonLayout(3)");
 		mContext = context;
 		
@@ -87,7 +87,7 @@ public class GestureButtonLayout extends FrameLayout {
 
 	public GestureButtonLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		// TODO Auto-generated constructor stub
+
 		MyLog.d(MyLog.DEBUG, "GestureButtonLayout(2)");
 		mContext = context;
 		
@@ -95,7 +95,7 @@ public class GestureButtonLayout extends FrameLayout {
 
 	public GestureButtonLayout(Context context) {
 		super(context);
-		// TODO Auto-generated constructor stub
+
 		MyLog.d(MyLog.DEBUG, "GestureButtonLayout(1)");
 		mContext = context;
 		
