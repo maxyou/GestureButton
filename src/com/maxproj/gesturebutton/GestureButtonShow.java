@@ -201,7 +201,7 @@ public class GestureButtonShow extends Activity {
 						}
 
 						/**
-						 * 保存一下轨迹，或许以后扩展需要
+						 * 保存一下轨迹，以后调节按钮位置会需要
 						 */
 						MovePath mp = new MyConfig.MovePath();
 						mp.x = x;
@@ -249,7 +249,9 @@ public class GestureButtonShow extends Activity {
 									LayoutParams params = new LayoutParams(
 											LayoutParams.WRAP_CONTENT,
 											LayoutParams.WRAP_CONTENT);
-									int index = mpl.size() * i / ibl.size();
+									int index = mpl.size()
+											* i
+											/ (ibl.size() + MyConfig.HandlerMargin);
 									if (index >= mpl.size()) {
 										index = mpl.size() - 1;
 									}
@@ -272,9 +274,38 @@ public class GestureButtonShow extends Activity {
 						} else if (MyConfig.mode == MyConfig.MODE_LINE) {
 							/**
 							 * 在LINE直线模式下，第i个按钮放在第一个MOVE和最后一个MOVE之间的直线中，
-							 * 需要按比例计算位置 由于按钮位置不断随新的MOVE而变化，所以没法做fade
+							 * 需要按某种比例计算位置 由于按钮位置不断随新的MOVE而变化 没法做fade
 							 * in动画，而是直接显示
 							 */
+							if (mpl.size() > MyConfig.moveThreshold) {
+								MyLog.d(MyLog.DEBUG,
+										"(mpl.size() > MyConfig.moveThreshold)");
+								for (int i = 0; i < ibl.size(); i++) {
+									ImageButton ib = ibl.get(i);
+									LayoutParams params = new LayoutParams(
+											LayoutParams.WRAP_CONTENT,
+											LayoutParams.WRAP_CONTENT);
+
+									params.leftMargin = Math.round(
+											mpl.getFirst().x +
+											(((mpl.getLast().x - mpl.getFirst().x) * i)
+													/ (ibl.size() + MyConfig.HandlerMargin)));
+									params.topMargin = Math.round(
+											mpl.getFirst().y +
+											(((mpl.getLast().y - mpl.getFirst().y) * i)
+													/ (ibl.size() + MyConfig.HandlerMargin)));
+
+									MyLog.d(MyLog.DEBUG, "left:"
+											+ params.leftMargin + " top:"
+											+ params.topMargin);
+									params.width = 80;
+									params.height = 80;
+									ib.setLayoutParams(params);
+									ib.setAlpha(1f);
+									ib.setVisibility(View.VISIBLE);
+								}
+
+							}
 						}
 
 					}
