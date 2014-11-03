@@ -13,7 +13,7 @@ public class MyConfig {
 	 * 系统相关
 	 */
 	public static Context app = null;
-	public static GestureButtonTest gestureButton = null;
+	public static GestureButtonShow gestureButton = null;
 	
 	public static final String pathRoot = Environment
 			.getExternalStorageDirectory().getPath();

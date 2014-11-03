@@ -23,7 +23,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class GestureButtonTest extends Activity {
+public class GestureButtonShow extends Activity {
 
 	GestureButtonLayout gestureLayer;
 	LinearLayout appLayer;
@@ -31,8 +31,13 @@ public class GestureButtonTest extends Activity {
 
 	LinkedList<MovePath> mpl = new LinkedList<MovePath>();
 	final LinkedList<ImageButton> ibl = new LinkedList<ImageButton>();
+
+	/**
+	 * 当buttonDelayAndAnimation不为0时，说明button处于待按状态或动画状态 此刻DOWN、UP、MOVE均不处理
+	 */
 	int buttonDelayAndAnimation = 0;
-//	int buttonNumber = 6;
+
+	// int buttonNumber = 6;
 
 	class AnimatorListenerOfObj implements AnimatorListener {
 		Object mObj;
@@ -135,7 +140,9 @@ public class GestureButtonTest extends Activity {
 
 					@Override
 					public void onOverLayerTouchDown() {
-						mpl.clear();
+						if (buttonDelayAndAnimation == 0) {
+							mpl.clear();
+						}
 					}
 				});
 		gestureLayer
@@ -147,18 +154,11 @@ public class GestureButtonTest extends Activity {
 								"buttonDelayAndAnimation when UP: "
 										+ buttonDelayAndAnimation);
 						if (buttonDelayAndAnimation == 0) {
+
 							/**
-							 * 统计这次UP会添加几个buttonDelayAndAnimation
-							 * 这是假定1秒钟后button的visibilty不变 在极端的情况下，第二次滑动极快，或许导致问题
-							 * 但没必要考虑
-							 * 总之这里不是很顺畅，应该理清逻辑关系
-							 * TODO:
+							 * 假定button都在VISIBLE状态，都会进入delay&animation状态
 							 */
-							for (int i = 0; i < ibl.size(); i++) {
-								if (ibl.get(i).getVisibility() != View.INVISIBLE) {
-									buttonDelayAndAnimation++;
-								}
-							}
+							buttonDelayAndAnimation = ibl.size();
 
 							new Handler().postDelayed(new Runnable() {
 
@@ -166,12 +166,12 @@ public class GestureButtonTest extends Activity {
 								public void run() {
 									for (int i = 0; i < ibl.size(); i++) {
 										ImageButton ib = ibl.get(i);
-										
-										MyLog.d(MyLog.DEBUG,"ib.setVisibility(View.INVISIBLE)");
-												
-//										ib.setVisibility(View.INVISIBLE);
-										
-										if (ib.getVisibility() != View.INVISIBLE) {
+
+										if (ib.getVisibility() == View.VISIBLE) {
+											/**
+											 * buttonDelayAndAnimation不减减
+											 * 在animation结束时减减
+											 */
 											ObjectAnimator anim = ObjectAnimator
 													.ofFloat(ib, "alpha", 1f,
 															0f);
@@ -179,6 +179,9 @@ public class GestureButtonTest extends Activity {
 											anim.addListener(new AnimatorListenerOfObj(
 													ib));
 											anim.start();
+										} else {
+											// 没显示的都减减
+											buttonDelayAndAnimation--;
 										}
 									}
 									mpl.clear();
@@ -193,6 +196,10 @@ public class GestureButtonTest extends Activity {
 					@Override
 					public void onOverLayerTouchMove(float x, float y) {
 
+						if (buttonDelayAndAnimation != 0) {
+							return;
+						}
+
 						/**
 						 * 保存一下轨迹，或许以后扩展需要
 						 */
@@ -201,7 +208,7 @@ public class GestureButtonTest extends Activity {
 						mp.y = y;
 						mpl.add(mp);
 						MyLog.d(MyLog.DEBUG, "mpl.size(): " + mpl.size());
-						
+
 						if (MyConfig.mode == MyConfig.MODE_BASIC) {
 
 							/**
@@ -235,21 +242,26 @@ public class GestureButtonTest extends Activity {
 							 * 由于按钮位置不断随新的MOVE而变化，所以没法做fade in动画，而是直接显示
 							 */
 							if (mpl.size() > MyConfig.moveThreshold) {
-								MyLog.d(MyLog.DEBUG, "(mpl.size() > MyConfig.moveThreshold)");
+								MyLog.d(MyLog.DEBUG,
+										"(mpl.size() > MyConfig.moveThreshold)");
 								for (int i = 0; i < ibl.size(); i++) {
 									ImageButton ib = ibl.get(i);
 									LayoutParams params = new LayoutParams(
 											LayoutParams.WRAP_CONTENT,
 											LayoutParams.WRAP_CONTENT);
 									int index = mpl.size() * i / ibl.size();
-									if (index >= mpl.size()){
+									if (index >= mpl.size()) {
 										index = mpl.size() - 1;
-									}										
-									params.leftMargin = Math.round(mpl.get(index).x);
-									params.topMargin = Math.round(mpl.get(index).y);
-									MyLog.d(MyLog.DEBUG, "left:"+params.leftMargin+" top:"+params.topMargin);
+									}
+									params.leftMargin = Math.round(mpl
+											.get(index).x);
+									params.topMargin = Math.round(mpl
+											.get(index).y);
+									MyLog.d(MyLog.DEBUG, "left:"
+											+ params.leftMargin + " top:"
+											+ params.topMargin);
 									params.width = 80;
-									params.height = 80;									
+									params.height = 80;
 									ib.setLayoutParams(params);
 									ib.setAlpha(1f);
 									ib.setVisibility(View.VISIBLE);
