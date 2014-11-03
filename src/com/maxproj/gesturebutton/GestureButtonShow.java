@@ -1,5 +1,6 @@
 package com.maxproj.gesturebutton;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.maxproj.gesturebutton.GestureButtonLayout.OnOverLayerTouchDownListener;
@@ -13,14 +14,17 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
+import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 public class GestureButtonShow extends Activity {
@@ -39,33 +43,25 @@ public class GestureButtonShow extends Activity {
 
 	// int buttonNumber = 6;
 
-	class AnimatorListenerOfObj implements AnimatorListener {
-		Object mObj;
-
-		public AnimatorListenerOfObj(Object obj) {
-			mObj = obj;
-		}
+	OnNavigationListener mNavigationCallback = new OnNavigationListener() {
 
 		@Override
-		public void onAnimationStart(Animator animation) {
-		}
-
-		@Override
-		public void onAnimationEnd(Animator animation) {
-			((View) mObj).setVisibility(View.INVISIBLE);
-			if (buttonDelayAndAnimation > 0) {
-				buttonDelayAndAnimation--;
+		public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+			switch (itemPosition) {
+			case 0:
+				MyConfig.mode = MyConfig.MODE_LINE;
+				break;
+			case 1:
+				MyConfig.mode = MyConfig.MODE_PATH;
+				break;
+			case 2:
+				MyConfig.mode = MyConfig.MODE_FIXED;
+				break;
 			}
-		}
 
-		@Override
-		public void onAnimationCancel(Animator animation) {
+			return true;
 		}
-
-		@Override
-		public void onAnimationRepeat(Animator animation) {
-		}
-	}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,63 +74,25 @@ public class GestureButtonShow extends Activity {
 		}
 
 		actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
-		ImageButton ib0 = (ImageButton) findViewById(R.id.qb0);
-		ib0.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(MyConfig.app, "button 0 is pressed",
-						Toast.LENGTH_LONG).show();
-			}
-		});
-		ibl.add(ib0);
-		ImageButton ib1 = (ImageButton) findViewById(R.id.qb1);
-		ib1.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(MyConfig.app, "button 1 is pressed",
-						Toast.LENGTH_LONG).show();
-			}
-		});
-		ibl.add(ib1);
-		ImageButton ib2 = (ImageButton) findViewById(R.id.qb2);
-		ib2.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(MyConfig.app, "button 2 is pressed",
-						Toast.LENGTH_LONG).show();
-			}
-		});
-		ibl.add(ib2);
-		ImageButton ib3 = (ImageButton) findViewById(R.id.qb3);
-		ib3.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(MyConfig.app, "button 3 is pressed",
-						Toast.LENGTH_LONG).show();
-			}
-		});
-		ibl.add(ib3);
-		ImageButton ib4 = (ImageButton) findViewById(R.id.qb4);
-		ib4.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(MyConfig.app, "button 4 is pressed",
-						Toast.LENGTH_LONG).show();
-			}
-		});
-		ibl.add(ib4);
-		ImageButton ib5 = (ImageButton) findViewById(R.id.qb5);
-		ib5.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(MyConfig.app, "button 5 is pressed",
-						Toast.LENGTH_LONG).show();
-			}
-		});
-		ibl.add(ib5);
+		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
+				R.array.action_list,
+				android.R.layout.simple_spinner_dropdown_item);
+
+		actionBar.setListNavigationCallbacks(mSpinnerAdapter,
+				mNavigationCallback);
+
+		initQuickButtons();
 
 		gestureLayer = (GestureButtonLayout) findViewById(R.id.gesture_button_layer);
+
+		gestureLayerTouchActionProcess();
+
+	}
+
+	private void gestureLayerTouchActionProcess() {
+
 		gestureLayer
 				.setOverLayerTouchDownListener(new OnOverLayerTouchDownListener() {
 
@@ -209,7 +167,7 @@ public class GestureButtonShow extends Activity {
 						mpl.add(mp);
 						MyLog.d(MyLog.DEBUG, "mpl.size(): " + mpl.size());
 
-						if (MyConfig.mode == MyConfig.MODE_BASIC) {
+						if (MyConfig.mode == MyConfig.MODE_FIXED) {
 
 							/**
 							 * 在BASIC模式下，第i个按钮固定放置在第i*MODE_BASIC_GAP个MOVE的位置上
@@ -286,14 +244,16 @@ public class GestureButtonShow extends Activity {
 											LayoutParams.WRAP_CONTENT,
 											LayoutParams.WRAP_CONTENT);
 
-									params.leftMargin = Math.round(
-											mpl.getFirst().x +
-											(((mpl.getLast().x - mpl.getFirst().x) * i)
-													/ (ibl.size() + MyConfig.HandlerMargin)));
-									params.topMargin = Math.round(
-											mpl.getFirst().y +
-											(((mpl.getLast().y - mpl.getFirst().y) * i)
-													/ (ibl.size() + MyConfig.HandlerMargin)));
+									params.leftMargin = Math.round(mpl
+											.getFirst().x
+											+ (((mpl.getLast().x - mpl
+													.getFirst().x) * i) / (ibl
+													.size() + MyConfig.HandlerMargin)));
+									params.topMargin = Math.round(mpl
+											.getFirst().y
+											+ (((mpl.getLast().y - mpl
+													.getFirst().y) * i) / (ibl
+													.size() + MyConfig.HandlerMargin)));
 
 									MyLog.d(MyLog.DEBUG, "left:"
 											+ params.leftMargin + " top:"
@@ -310,7 +270,91 @@ public class GestureButtonShow extends Activity {
 
 					}
 				});
+	}
 
+	private void initQuickButtons() {
+		ImageButton ib0 = (ImageButton) findViewById(R.id.qb0);
+		ib0.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(MyConfig.app, "button 0 is pressed",
+						Toast.LENGTH_LONG).show();
+			}
+		});
+		ibl.add(ib0);
+		ImageButton ib1 = (ImageButton) findViewById(R.id.qb1);
+		ib1.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(MyConfig.app, "button 1 is pressed",
+						Toast.LENGTH_LONG).show();
+			}
+		});
+		ibl.add(ib1);
+		ImageButton ib2 = (ImageButton) findViewById(R.id.qb2);
+		ib2.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(MyConfig.app, "button 2 is pressed",
+						Toast.LENGTH_LONG).show();
+			}
+		});
+		ibl.add(ib2);
+		ImageButton ib3 = (ImageButton) findViewById(R.id.qb3);
+		ib3.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(MyConfig.app, "button 3 is pressed",
+						Toast.LENGTH_LONG).show();
+			}
+		});
+		ibl.add(ib3);
+		ImageButton ib4 = (ImageButton) findViewById(R.id.qb4);
+		ib4.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(MyConfig.app, "button 4 is pressed",
+						Toast.LENGTH_LONG).show();
+			}
+		});
+		ibl.add(ib4);
+		ImageButton ib5 = (ImageButton) findViewById(R.id.qb5);
+		ib5.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(MyConfig.app, "button 5 is pressed",
+						Toast.LENGTH_LONG).show();
+			}
+		});
+		ibl.add(ib5);
+	}
+
+	class AnimatorListenerOfObj implements AnimatorListener {
+		Object mObj;
+
+		public AnimatorListenerOfObj(Object obj) {
+			mObj = obj;
+		}
+
+		@Override
+		public void onAnimationStart(Animator animation) {
+		}
+
+		@Override
+		public void onAnimationEnd(Animator animation) {
+			((View) mObj).setVisibility(View.INVISIBLE);
+			if (buttonDelayAndAnimation > 0) {
+				buttonDelayAndAnimation--;
+			}
+		}
+
+		@Override
+		public void onAnimationCancel(Animator animation) {
+		}
+
+		@Override
+		public void onAnimationRepeat(Animator animation) {
+		}
 	}
 
 	@Override

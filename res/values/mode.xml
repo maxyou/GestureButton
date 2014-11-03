@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="action_list">
+        <item>Line</item>
+        <item>Path</item>
+        <item>Fixed</item>
+    </string-array>
+</resources>

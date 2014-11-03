@@ -22,7 +22,7 @@ public class MyConfig {
 	/**
 	 * 模式
 	 */
-	public static int MODE_BASIC = 0;
+	public static int MODE_FIXED = 0;
 	public static int MODE_PATH = 1;
 	public static int MODE_LINE = 2;
 	public static int mode = MODE_LINE;
