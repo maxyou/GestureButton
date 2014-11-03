@@ -1,6 +1,5 @@
 package com.maxproj.gesturebutton;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.maxproj.gesturebutton.GestureButtonLayout.OnOverLayerTouchDownListener;

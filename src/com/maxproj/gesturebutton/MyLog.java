@@ -61,7 +61,6 @@ public class MyLog {
 	
 	static public void d(String tag, String msgFormat, Object... args) {
 		
-		
 		if(outputSwitch == 0)
 			return;
 		

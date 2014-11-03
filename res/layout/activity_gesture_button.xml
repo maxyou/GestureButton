@@ -1,75 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
 
     <com.maxproj.gesturebutton.GestureButtonLayout
         android:id="@+id/gesture_button_layer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" 
-        >
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="50dp"
+            android:text="@string/readme"
+            android:textColor="@color/gray" />
 
         <ImageButton
             android:id="@+id/qb0"
-            android:visibility="invisible"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="0dp"
             android:layout_marginTop="0dp"
-            android:background="@drawable/qb0" >
+            android:background="@drawable/qb0"
+            android:visibility="invisible" >
         </ImageButton>
 
         <ImageButton
             android:id="@+id/qb1"
-            android:visibility="invisible"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="50dp"
             android:layout_marginTop="50dp"
-            android:background="@drawable/qb1" >
+            android:background="@drawable/qb1"
+            android:visibility="invisible" >
         </ImageButton>
 
         <ImageButton
             android:id="@+id/qb2"
-            android:visibility="invisible"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="100dp"
             android:layout_marginTop="100dp"
-            android:background="@drawable/qb2" >
+            android:background="@drawable/qb2"
+            android:visibility="invisible" >
         </ImageButton>
 
         <ImageButton
             android:id="@+id/qb3"
-            android:visibility="invisible"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="150dp"
             android:layout_marginTop="150dp"
-            android:background="@drawable/qb3" >
+            android:background="@drawable/qb3"
+            android:visibility="invisible" >
         </ImageButton>
 
         <ImageButton
             android:id="@+id/qb4"
-            android:visibility="invisible"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="200dp"
             android:layout_marginTop="200dp"
-            android:background="@drawable/qb4" >
+            android:background="@drawable/qb4"
+            android:visibility="invisible" >
         </ImageButton>
 
         <ImageButton
             android:id="@+id/qb5"
-            android:visibility="invisible"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="250dp"
             android:layout_marginTop="250dp"
-            android:background="@drawable/qb5" >
+            android:background="@drawable/qb5"
+            android:visibility="invisible" >
         </ImageButton>
-        
-
     </com.maxproj.gesturebutton.GestureButtonLayout>
 
 </LinearLayout>

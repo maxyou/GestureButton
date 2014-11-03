@@ -31,8 +31,8 @@ public class MyConfig {
 	 * 门限
 	 */
 	public static int moveThreshold = 5;// 稍微move一段之后出现按钮
-	public static int MODE_BASIC_GAP = 5;//BASIC模式下按钮的MOVE间隔
-	public static int HandlerMargin = 0;//留两个间隔的位置，防止手指挡住按钮
+	public static int MODE_BASIC_GAP = 5;//FIXED模式下按钮的MOVE间隔
+	public static int HandlerMargin = 0;//可以留若干间隔，防止手指挡住按钮
 	
 	
 	public static class MovePath {
