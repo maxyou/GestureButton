@@ -19,7 +19,23 @@ public class MyConfig {
 			.getExternalStorageDirectory().getPath();
 	public static final String time_format = "yyyy-MM-dd";
 	
-
-
+	/**
+	 * 模式
+	 */
+	public static int MODE_BASIC = 0;
+	public static int MODE_PATH = 1;
+	public static int MODE_LINE = 2;
+	public static int mode = MODE_PATH;
 	
+	/**
+	 * 门限
+	 */
+	public static int moveThreshold = 5;// 稍微move一段之后出现按钮
+	public static int MODE_BASIC_GAP = 5;//BASIC模式下按钮的MOVE间隔
+	
+	
+	public static class MovePath {
+		float x;
+		float y;
+	}
 }

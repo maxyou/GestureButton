@@ -7,37 +7,47 @@ import android.widget.FrameLayout;
 
 public class GestureButtonLayout extends FrameLayout {
 	Context mContext;
-	
-    public interface OnOverLayerTouchDownListener {
-        void onOverLayerTouchDown();
-    }
-    public interface OnOverLayerTouchUpListener {
-        void onOverLayerTouchUp();
-    }
-    public interface OnOverLayerTouchMoveListener {
-        void onOverLayerTouchMove(float x, float y);
-    }
-	
-    OnOverLayerTouchDownListener mTouchDownListener;
-    OnOverLayerTouchUpListener mTouchUpListener;
-    OnOverLayerTouchMoveListener mTouchMoveListener;
-    
-	public void setOverLayerTouchDownListener(OnOverLayerTouchDownListener l){
+
+	public interface OnOverLayerTouchDownListener {
+		void onOverLayerTouchDown();
+	}
+
+	public interface OnOverLayerTouchUpListener {
+		void onOverLayerTouchUp();
+	}
+
+	public interface OnOverLayerTouchMoveListener {
+		void onOverLayerTouchMove(float x, float y);
+	}
+
+	OnOverLayerTouchDownListener mTouchDownListener;
+	OnOverLayerTouchUpListener mTouchUpListener;
+	OnOverLayerTouchMoveListener mTouchMoveListener;
+
+	public void setOverLayerTouchDownListener(OnOverLayerTouchDownListener l) {
 		mTouchDownListener = l;
-	}	
-	public void setOverLayerTouchUpListener(OnOverLayerTouchUpListener l){
+	}
+
+	public void setOverLayerTouchUpListener(OnOverLayerTouchUpListener l) {
 		mTouchUpListener = l;
 	}
-	public void setOverLayerTouchMoveListener(OnOverLayerTouchMoveListener l){
+
+	public void setOverLayerTouchMoveListener(OnOverLayerTouchMoveListener l) {
 		mTouchMoveListener = l;
 	}
-	
+
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent event) {
 		if (isEnabled()) {
-			processEvent(event);//私下处理event
-			super.dispatchTouchEvent(event); //继续传播event
-			return true; //本层也继续接收event
+			processEvent(event);// 私下处理event
+
+			/**
+			 * 可以在这里判断MOVE的距离
+			 * 如果超出阀值，可以停止传播，使得下层的View得不到event
+			 */
+			super.dispatchTouchEvent(event); // 继续传播event
+
+			return true; // 本层也继续接收event
 		}
 		return super.dispatchTouchEvent(event);
 	}
@@ -53,7 +63,7 @@ public class GestureButtonLayout extends FrameLayout {
 		case MotionEvent.ACTION_UP:
 			touchUp(event);
 			break;
-		case MotionEvent.ACTION_CANCEL:			
+		case MotionEvent.ACTION_CANCEL:
 			break;
 		}
 		return false;
@@ -61,14 +71,14 @@ public class GestureButtonLayout extends FrameLayout {
 
 	private void touchDown(MotionEvent event) {
 		MyLog.d(MyLog.DEBUG, "touchDown()!");
-		
+
 		mTouchDownListener.onOverLayerTouchDown();
 	}
 
 	private void touchMove(MotionEvent event) {
 		MyLog.d(MyLog.DEBUG, "touchMove()");
-		
-		mTouchMoveListener.onOverLayerTouchMove(event.getX(),event.getY());
+
+		mTouchMoveListener.onOverLayerTouchMove(event.getX(), event.getY());
 	}
 
 	private void touchUp(MotionEvent event) {
@@ -82,7 +92,7 @@ public class GestureButtonLayout extends FrameLayout {
 
 		MyLog.d(MyLog.DEBUG, "GestureButtonLayout(3)");
 		mContext = context;
-		
+
 	}
 
 	public GestureButtonLayout(Context context, AttributeSet attrs) {
@@ -90,7 +100,7 @@ public class GestureButtonLayout extends FrameLayout {
 
 		MyLog.d(MyLog.DEBUG, "GestureButtonLayout(2)");
 		mContext = context;
-		
+
 	}
 
 	public GestureButtonLayout(Context context) {
@@ -98,6 +108,6 @@ public class GestureButtonLayout extends FrameLayout {
 
 		MyLog.d(MyLog.DEBUG, "GestureButtonLayout(1)");
 		mContext = context;
-		
+
 	}
 }

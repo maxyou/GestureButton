@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.maxproj.gesturebutton.GestureButtonLayout.OnOverLayerTouchDownListener;
 import com.maxproj.gesturebutton.GestureButtonLayout.OnOverLayerTouchMoveListener;
 import com.maxproj.gesturebutton.GestureButtonLayout.OnOverLayerTouchUpListener;
+import com.maxproj.gesturebutton.MyConfig.MovePath;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,15 +29,10 @@ public class GestureButtonTest extends Activity {
 	LinearLayout appLayer;
 	ActionBar actionBar;
 
-	class MovePath {
-		float x;
-		float y;
-	}
-
 	LinkedList<MovePath> mpl = new LinkedList<MovePath>();
 	final LinkedList<ImageButton> ibl = new LinkedList<ImageButton>();
-	int moveThreshold = 5;// 稍微move一段之后出现按钮
-	static int buttonDelayAndAnimation = 0;
+	int buttonDelayAndAnimation = 0;
+//	int buttonNumber = 6;
 
 	class AnimatorListenerOfObj implements AnimatorListener {
 		Object mObj;
@@ -153,13 +149,14 @@ public class GestureButtonTest extends Activity {
 						if (buttonDelayAndAnimation == 0) {
 							/**
 							 * 统计这次UP会添加几个buttonDelayAndAnimation
-							 * 这是假定1秒钟后button的visibilty不变
-							 * 在极端的情况下，第二次滑动极快，或许导致问题
+							 * 这是假定1秒钟后button的visibilty不变 在极端的情况下，第二次滑动极快，或许导致问题
 							 * 但没必要考虑
+							 * 总之这里不是很顺畅，应该理清逻辑关系
+							 * TODO:
 							 */
-							for (int i = 0; i < ibl.size(); i++) {								
+							for (int i = 0; i < ibl.size(); i++) {
 								if (ibl.get(i).getVisibility() != View.INVISIBLE) {
-									buttonDelayAndAnimation++;									
+									buttonDelayAndAnimation++;
 								}
 							}
 
@@ -169,6 +166,11 @@ public class GestureButtonTest extends Activity {
 								public void run() {
 									for (int i = 0; i < ibl.size(); i++) {
 										ImageButton ib = ibl.get(i);
+										
+										MyLog.d(MyLog.DEBUG,"ib.setVisibility(View.INVISIBLE)");
+												
+//										ib.setVisibility(View.INVISIBLE);
+										
 										if (ib.getVisibility() != View.INVISIBLE) {
 											ObjectAnimator anim = ObjectAnimator
 													.ofFloat(ib, "alpha", 1f,
@@ -194,31 +196,73 @@ public class GestureButtonTest extends Activity {
 						/**
 						 * 保存一下轨迹，或许以后扩展需要
 						 */
-						MovePath mp = new MovePath();
+						MovePath mp = new MyConfig.MovePath();
 						mp.x = x;
 						mp.y = y;
 						mpl.add(mp);
+						MyLog.d(MyLog.DEBUG, "mpl.size(): " + mpl.size());
+						
+						if (MyConfig.mode == MyConfig.MODE_BASIC) {
 
-						for (int i = 0; i < ibl.size(); i++) {
-							if (mpl.size() == moveThreshold + (i * 5)) {
-								ImageButton ib = ibl.get(i);
-								if (ib.getVisibility() != View.VISIBLE) {
+							/**
+							 * 在BASIC模式下，第i个按钮固定放置在第i*MODE_BASIC_GAP个MOVE的位置上
+							 */
+							for (int i = 0; i < ibl.size(); i++) {
+								if (mpl.size() == MyConfig.moveThreshold
+										+ (i * MyConfig.MODE_BASIC_GAP)) {
+									ImageButton ib = ibl.get(i);
+									if (ib.getVisibility() != View.VISIBLE) {
+										LayoutParams params = new LayoutParams(
+												LayoutParams.WRAP_CONTENT,
+												LayoutParams.WRAP_CONTENT);
+										params.leftMargin = Math.round(x);
+										params.topMargin = Math.round(y);
+										params.width = 80;
+										params.height = 80;
+										ib.setLayoutParams(params);
+										ib.setAlpha(0f);
+										ib.setVisibility(View.VISIBLE);
+										ObjectAnimator anim = ObjectAnimator
+												.ofFloat(ib, "alpha", 0f, 1f);
+										anim.setDuration(500);
+										anim.start();
+									}
+								}
+							}
+						} else if (MyConfig.mode == MyConfig.MODE_PATH) {
+							/**
+							 * 在PATH轨迹模式下，第i个按钮放在(mpl.size()/5)*i的位置
+							 * 由于按钮位置不断随新的MOVE而变化，所以没法做fade in动画，而是直接显示
+							 */
+							if (mpl.size() > MyConfig.moveThreshold) {
+								MyLog.d(MyLog.DEBUG, "(mpl.size() > MyConfig.moveThreshold)");
+								for (int i = 0; i < ibl.size(); i++) {
+									ImageButton ib = ibl.get(i);
 									LayoutParams params = new LayoutParams(
 											LayoutParams.WRAP_CONTENT,
 											LayoutParams.WRAP_CONTENT);
-									params.leftMargin = Math.round(x);
-									params.topMargin = Math.round(y);
+									int index = mpl.size() * i / ibl.size();
+									if (index >= mpl.size()){
+										index = mpl.size() - 1;
+									}										
+									params.leftMargin = Math.round(mpl.get(index).x);
+									params.topMargin = Math.round(mpl.get(index).y);
+									MyLog.d(MyLog.DEBUG, "left:"+params.leftMargin+" top:"+params.topMargin);
 									params.width = 80;
-									params.height = 80;
+									params.height = 80;									
 									ib.setLayoutParams(params);
-									ib.setAlpha(0f);
+									ib.setAlpha(1f);
 									ib.setVisibility(View.VISIBLE);
-									ObjectAnimator anim = ObjectAnimator
-											.ofFloat(ib, "alpha", 0f, 1f);
-									anim.setDuration(500);
-									anim.start();
 								}
+
 							}
+
+						} else if (MyConfig.mode == MyConfig.MODE_LINE) {
+							/**
+							 * 在LINE直线模式下，第i个按钮放在第一个MOVE和最后一个MOVE之间的直线中，
+							 * 需要按比例计算位置 由于按钮位置不断随新的MOVE而变化，所以没法做fade
+							 * in动画，而是直接显示
+							 */
 						}
 
 					}
