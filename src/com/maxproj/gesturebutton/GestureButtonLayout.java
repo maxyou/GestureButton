@@ -44,6 +44,7 @@ public class GestureButtonLayout extends FrameLayout {
 			/**
 			 * 可以在这里判断MOVE的距离
 			 * 如果超出阀值，可以停止传播，使得下层的View得不到event
+			 * 可以考虑添加回调函数，把这个逻辑放在GestureButtonShow.java里面
 			 */
 			super.dispatchTouchEvent(event); // 继续传播event
 

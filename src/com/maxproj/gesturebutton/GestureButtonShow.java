@@ -40,7 +40,25 @@ public class GestureButtonShow extends Activity {
 	 */
 	int buttonDelayAndAnimation = 0;
 
-	// int buttonNumber = 6;
+	/**
+	 * 计算margin时需要考虑按钮形状，这里假定是圆形按钮，margin要减去半径，且始终大于0
+	 */
+	int circularButtonRadius = 50;
+
+	private int leftMarginCountButtonShape(int x) {
+		if (x > circularButtonRadius) {
+			return x - circularButtonRadius;
+		}else{
+			return 0;
+		}
+	}
+	private int topMarginCountButtonShape(int y) {
+		if (y > circularButtonRadius) {
+			return y - circularButtonRadius;
+		}else{
+			return 0;
+		}
+	}
 
 	OnNavigationListener mNavigationCallback = new OnNavigationListener() {
 
@@ -179,8 +197,8 @@ public class GestureButtonShow extends Activity {
 										LayoutParams params = new LayoutParams(
 												LayoutParams.WRAP_CONTENT,
 												LayoutParams.WRAP_CONTENT);
-										params.leftMargin = Math.round(x);
-										params.topMargin = Math.round(y);
+										params.leftMargin = leftMarginCountButtonShape(Math.round(x));
+										params.topMargin = topMarginCountButtonShape(Math.round(y));
 										params.width = 80;
 										params.height = 80;
 										ib.setLayoutParams(params);
@@ -212,10 +230,10 @@ public class GestureButtonShow extends Activity {
 									if (index >= mpl.size()) {
 										index = mpl.size() - 1;
 									}
-									params.leftMargin = Math.round(mpl
-											.get(index).x);
-									params.topMargin = Math.round(mpl
-											.get(index).y);
+									params.leftMargin = leftMarginCountButtonShape(Math.round(mpl
+											.get(index).x));
+									params.topMargin = topMarginCountButtonShape(Math.round(mpl
+											.get(index).y));
 									MyLog.d(MyLog.DEBUG, "left:"
 											+ params.leftMargin + " top:"
 											+ params.topMargin);
@@ -243,16 +261,16 @@ public class GestureButtonShow extends Activity {
 											LayoutParams.WRAP_CONTENT,
 											LayoutParams.WRAP_CONTENT);
 
-									params.leftMargin = Math.round(mpl
+									params.leftMargin = leftMarginCountButtonShape(Math.round(mpl
 											.getFirst().x
 											+ (((mpl.getLast().x - mpl
 													.getFirst().x) * i) / (ibl
-													.size() + MyConfig.HandlerMargin)));
-									params.topMargin = Math.round(mpl
+													.size() + MyConfig.HandlerMargin))));
+									params.topMargin = topMarginCountButtonShape(Math.round(mpl
 											.getFirst().y
 											+ (((mpl.getLast().y - mpl
 													.getFirst().y) * i) / (ibl
-													.size() + MyConfig.HandlerMargin)));
+													.size() + MyConfig.HandlerMargin))));
 
 									MyLog.d(MyLog.DEBUG, "left:"
 											+ params.leftMargin + " top:"
